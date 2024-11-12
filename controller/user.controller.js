@@ -1,5 +1,6 @@
 import express from "express";
 import { callEmergencyService, userRegisterService, verifyEmergencyContact } from "../service/user.service.js";
+import { PluginListInstance } from "twilio/lib/rest/flexApi/v1/plugin.js";
 
 /**
   * @param {express.Request} req 
@@ -67,12 +68,17 @@ export async function userRegisterController(req, res) {
     if (!resp) {
       res.status(500).json({ message: "Internal Server error!" })
     }
-    userRegisterService(body);
-    res.status(201).json({ message: "User Registered Successfully!!" });
-    return;
-
+    const checkUser = await userRegisterService(body);
+    if (checkUser === undefined) {
+      res.status(201).json({ message: "User Registered Successfully!!" });
+      return;
+    } else {
+      res.status(400).json({ message: "User already exists!" });
+      return;
+    }
 
   } catch (err) {
+    console.log(err.message);
     res.status(400).json({ message: err.message });
     return;
   }

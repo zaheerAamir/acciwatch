@@ -17,6 +17,32 @@ export async function userRegisterRepo(body) {
 }
 
 /**
+  * @param {String} email 
+  * **/
+export async function checkUserExists(email) {
+
+  try {
+
+    /**
+      * @type {import("../schema/user.schema.js").User[]}
+      * **/
+
+    const user = await userModel.find({ email: email });
+    console.log(user)
+    if (!user || user.length === 0) {
+      return true;
+    }
+
+    return false;
+
+  } catch (err) {
+    throw new Error(err);
+  }
+
+
+}
+
+/**
   * @param {import("../schema/user.schema.js").AccidentDetails} body 
 **/
 export async function callEmergencyRepo(body) {

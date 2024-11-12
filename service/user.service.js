@@ -1,4 +1,4 @@
-import { callEmergencyRepo, userRegisterRepo } from "../repository/user.repo.js";
+import { callEmergencyRepo, checkUserExists, userRegisterRepo } from "../repository/user.repo.js";
 import { generateUserId } from "../utils/helper.js";
 import twilio from "twilio";
 import { config } from "dotenv";
@@ -10,10 +10,18 @@ export async function userRegisterService(body) {
 
   try {
     body.userID = generateUserId();
-    userRegisterRepo(body);
+    const resp = await checkUserExists(body.email);
+
+    if (resp) {
+      console.log("User Does not exist!")
+      userRegisterRepo(body);
+    } else {
+
+      return "User already exist";
+    }
+
   } catch (err) {
     throw new Error(err);
-
   }
 
 }
@@ -72,6 +80,7 @@ export async function callEmergencyService(body) {
 
     if (twilioNumber !== undefined) {
       for (const phoneNumber of phoneNumbers) {
+
         const call = await client.calls.create({
           from: twilioNumber,
           to: `+91${phoneNumber}`,
@@ -79,6 +88,13 @@ export async function callEmergencyService(body) {
         })
         console.log(call.sid);
 
+
+        const message = await client.messages.create({
+          body: "Hi this message is from Aamir",
+          from: twilioNumber,
+          to: `+91${phoneNumber}`,
+        })
+        console.log(message.sid);
       }
     }
 
