@@ -91,7 +91,6 @@ export async function userRegisterController(req, res) {
 export async function callEmergencyController(req, res) {
 
   try {
-    console.log(req);
     console.log(req.body);
     /**
       * @type {import("../schema/user.schema").AccidentDetails}
