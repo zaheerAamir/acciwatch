@@ -1,6 +1,7 @@
 import express, { json } from "express";
 import { callEmergencyService, getAccidentDetailsService, userRegisterService, verifyEmergencyContact } from "../service/user.service.js";
 import { PluginListInstance } from "twilio/lib/rest/flexApi/v1/plugin.js";
+import { config } from "nodemon";
 
 /**
   * @param {express.Request} req 
@@ -92,6 +93,8 @@ export async function userRegisterController(req, res) {
 export async function callEmergencyController(req, res) {
 
   try {
+    console.log(req);
+    console.log(req.body);
     /**
       * @type {import("../schema/user.schema").AccidentDetails}
     **/
