@@ -1,7 +1,5 @@
-import express, { json } from "express";
+import express from "express";
 import { callEmergencyService, getAccidentDetailsService, userRegisterService, verifyEmergencyContact } from "../service/user.service.js";
-import { PluginListInstance } from "twilio/lib/rest/flexApi/v1/plugin.js";
-import { config } from "nodemon";
 
 /**
   * @param {express.Request} req 
