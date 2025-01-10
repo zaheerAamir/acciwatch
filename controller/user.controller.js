@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import { callEmergencyService, getAccidentDetailsService, userRegisterService, verifyEmergencyContact } from "../service/user.service.js";
 import { PluginListInstance } from "twilio/lib/rest/flexApi/v1/plugin.js";
 
@@ -95,7 +95,7 @@ export async function callEmergencyController(req, res) {
     /**
       * @type {import("../schema/user.schema").AccidentDetails}
     **/
-    const body = req.body;
+    const body = JSON.parse(req.body);
 
     if (!body.userID || typeof body.userID !== 'string') {
       return res.status(400).json({ message: "Invalid UserID! UserID must be of type String." });
