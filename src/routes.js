@@ -6,8 +6,8 @@ import { callEmergencyController, getAccidentDetailsController, healthCheckContr
 **/
 function routes(app) {
   app.get("/api/v1/healthCheck", healthCheckController);
-  app.post("/api/v1/userRegister", express.json(), userRegisterController);
-  app.post("/api/v1/callEmergency", express.text(), callEmergencyController)
+  app.post("/api/v1/userRegister", userRegisterController);
+  app.post("/api/v1/callEmergency", callEmergencyController)
   app.get("/api/v1/getAccidentDetails", getAccidentDetailsController);
 }
 
