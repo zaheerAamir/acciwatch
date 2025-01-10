@@ -49,9 +49,9 @@ export async function callEmergencyRepo(body) {
 
   try {
     /**
-      * @type {import("../schema/user.schema.js").User[]}
+      * @type {import("../schema/user.schema.js").User}
     **/
-    const user = await userModel.find({ userID: body.userID });
+    const user = await userModel.findOne({ userID: body.userID });
     if (!user || user === null || user === undefined) {
       throw new Error("UserID not found! User does not exist!");
     }

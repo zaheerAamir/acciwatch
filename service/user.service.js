@@ -3,6 +3,8 @@ import { generateUserId } from "../utils/helper.js";
 import twilio from "twilio";
 import { config } from "dotenv";
 
+let details = {}
+
 /**
   * @param {import("../schema/user.schema").User} body 
 **/
@@ -68,6 +70,7 @@ export async function callEmergencyService(body) {
 
   try {
     const user = await callEmergencyRepo(body);
+    /*
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const twilioNumber = process.env.TWILIO_NUMBER;
@@ -97,9 +100,32 @@ export async function callEmergencyService(body) {
         console.log(message.sid);
       }
     }
+    */
+
+    await getAccidentDetailsService(user, body);
+    details = {
+      user,
+      body
+    }
+    return true;
 
 
 
+  } catch (err) {
+    throw new Error(err);
+  }
+
+}
+
+/**
+  * @param {import("../schema/user.schema").AccidentDetails} AccidentDetails 
+  * @param {import("../schema/user.schema").User} user 
+  * **/
+export async function getAccidentDetailsService(user, AccidentDetails) {
+
+  try {
+
+    return { details };
   } catch (err) {
     throw new Error(err);
   }

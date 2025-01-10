@@ -1,5 +1,5 @@
 import express from "express";
-import { callEmergencyService, userRegisterService, verifyEmergencyContact } from "../service/user.service.js";
+import { callEmergencyService, getAccidentDetailsService, userRegisterService, verifyEmergencyContact } from "../service/user.service.js";
 import { PluginListInstance } from "twilio/lib/rest/flexApi/v1/plugin.js";
 
 /**
@@ -98,21 +98,38 @@ export async function callEmergencyController(req, res) {
     const body = req.body;
 
     if (!body.userID || typeof body.userID !== 'string') {
-      res.status(400).json({ message: "Invalid UserID! UserID must be of type String." });
-      return;
+      return res.status(400).json({ message: "Invalid UserID! UserID must be of type String." });
     }
 
     if (!body.accidentDetails || typeof body.accidentDetails !== 'string') {
-      res.status(400).json({ message: "Invalid accidentDetails! accidentDetails must be of type String." });
-      return;
+      return res.status(400).json({ message: "Invalid accidentDetails! accidentDetails must be of type String." });
     }
-    callEmergencyService(body);
-    res.status(204);
-    return;
+    const result = await callEmergencyService(body);
+    if (result) {
+      return res.status(204);
+    }
+
 
   } catch (err) {
     res.status(400).json({ message: err.message });
     return;
   }
 
-} 
+}
+
+/**
+  * @param {express.Request} req 
+  * @param {express.Response} res 
+**/
+export async function getAccidentDetailsController(req, res) {
+
+  try {
+
+    const result = await getAccidentDetailsService();
+    return res.status(200).json(result);
+
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+
+}
