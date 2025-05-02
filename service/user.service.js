@@ -1,7 +1,7 @@
 import { callEmergencyRepo, checkUserExists, userRegisterRepo } from "../repository/user.repo.js";
 import { generateUserId } from "../utils/helper.js";
 import twilio from "twilio";
-import { config } from "dotenv";
+import "dotenv/config";
 
 let details = {}
 
@@ -129,5 +129,80 @@ export async function getAccidentDetailsService(user, AccidentDetails) {
   } catch (err) {
     throw new Error(err);
   }
+
+}
+
+/**
+  * @param {string} mcc 
+  * @param {string} mnc 
+  * @param {string} lac 
+  * @param {string} cellid 
+  * **/
+export async function getLocService(mcc, mnc, lac, cellid) {
+
+  try {
+
+    const deciLAC = parseInt(lac, 16);
+    const deciCellId = parseInt(cellid, 16);
+    const token = process.env.UNWIRED_ACCESS_TOKEN;
+
+    let response;
+
+
+    if (token && token !== undefined) {
+      response = await fetch('https://us1.unwiredlabs.com/v2/process', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          token: token,
+          mcc: parseInt(mcc),
+          mnc: parseInt(mnc),
+          radio: "gsm",
+          cells: [
+            { lac: deciLAC, cid: deciCellId, psc: 0 }
+          ],
+          address: 1
+        })
+      });
+
+    }
+    const data = await response.json();
+
+    const query = `
+    [out:json];
+    (
+      node(around:500,${data.lat},${data.lon})["amenity"="hospital"];
+    );
+    out body;
+    `;
+
+    const res = await fetch("https://overpass-api.de/api/interpreter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: query
+    });
+
+    const data2 = await res.json();
+    const hospital = data2.elements.map((el) => {
+      return {
+        name: el.tags?.name,
+        lat: el.lat,
+        lon: el.lon
+      }
+    })
+
+    return hospital;
+
+
+
+
+  } catch (err) {
+    throw new Error(err);
+  }
+
 
 }

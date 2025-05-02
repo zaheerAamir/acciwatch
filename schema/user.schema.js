@@ -68,3 +68,11 @@ export const userModel = new mongoose.model("User", userSchema, "users");
   * @property {String} userID
   * @property {String} accidentDetails
 **/
+
+/**
+  * @typedef {Object} GsmLoc
+  * @property {String} MCC
+  * @property {String} MNC
+  * @property {String} LAC
+  * @property {String} CellID
+  * **/

@@ -1,5 +1,5 @@
 import express from "express";
-import { callEmergencyService, getAccidentDetailsService, userRegisterService, verifyEmergencyContact } from "../service/user.service.js";
+import { callEmergencyService, getAccidentDetailsService, getLocService, userRegisterService, verifyEmergencyContact } from "../service/user.service.js";
 
 /**
   * @param {express.Request} req 
@@ -127,6 +127,39 @@ export async function getAccidentDetailsController(req, res) {
 
     const result = await getAccidentDetailsService();
     return res.status(200).json(result);
+
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+
+}
+
+/**
+  * @param {express.Request} req 
+  * @param {express.Response} res 
+  * **/
+export async function getLocController(req, res) {
+
+  try {
+
+    /**
+      * @type {import("../schema/user.schema").GsmLoc}
+      * **/
+    const body = req.body;
+    if (!body.LAC && typeof body.LAC !== 'string') {
+      return res.status(400).json({ message: "Invalid LAC. Not String!" });
+    }
+    if (!body.MCC && typeof body.MCC !== 'string') {
+      return res.status(400).json({ message: "invalid MCC. Not string!" });
+    }
+    if (!body.MNC && typeof body.MNC !== 'string') {
+      return res.status(400).json({ message: "invalid MNC. Not string!" });
+    }
+    if (!body.CellID && typeof body.CellID !== 'string') {
+      return res.status(400).json({ message: "invalid CellID. Not string!" });
+    }
+
+    res.status(200).json(await getLocService(body.MCC, body.MNC, body.LAC, body.CellID));
 
   } catch (err) {
     return res.status(400).json({ message: err.message });
